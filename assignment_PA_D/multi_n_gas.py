@@ -62,7 +62,7 @@ class NeuralGas:
 		'''
 		dist = np.sum(self.centers-np.tile(X,(self.n_centers,1)),axis=1)
 		h = map(lambda x: lr*math.exp(-0.5*math.pow(x/float(s),2)),\
-				np.argsort(dist))
+				np.argsort(np.argsort(dist)))
 		for i in range(self.centers.shape[0]):
 			self.centers[i]=self.centers[i]+(lr*h[i]*(X-self.centers[i]))
 		
@@ -98,7 +98,7 @@ class Multi_NeuralGas:
 	
 	
 	def train(self, trainX, lr_0=0.5, lr_end = 0.1, decay_to_s=0.25,
-			  epochs=1000, s=0.3):
+			  epochs=100, s=0.3):
 		'''
 		Train a Multi-N-Gas by training only the requisite winner neural
 		gas model.
@@ -141,7 +141,7 @@ class Multi_NeuralGas:
 				self.NG_list[winner_idx]._update(d, _s, _lr)
 			t+=1
 			
-		#self.plot2D(trainX)
+		self.plot2D(trainX)
 		self.write_centers_to_file()
 		return
 	
@@ -195,11 +195,12 @@ class Multi_NeuralGas:
 		
 if __name__ == '__main__':
 	
-	#d = load_data('train_PA-D.dat.txt') # Use to read given dataset
+	d = load_data('train_PA-D.dat.txt') # Use to read given dataset
 	
-	d = generate_data(2) # Please use to randomly generate dataset from 
+	#d = generate_data(2) # Please use to randomly generate dataset from 
 						 # unit cube
 	
-	M_NG = Multi_NeuralGas(M=4,K=2,N=2)
-	M_NG.train(d)
+	M_NG = Multi_NeuralGas(M=1,K=100,N=2)
+	M_NG.train(d, lr_0=0.5, lr_end = 0.1, decay_to_s=0.25, \
+			   epochs=500, s=0.3)
 	
